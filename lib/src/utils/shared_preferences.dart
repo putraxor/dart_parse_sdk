@@ -14,7 +14,10 @@ class SharedPreferences {
       final temp = (await getTemporaryDirectory());
       File _preferencesFile = File('${temp.path}/${_prefix}pref');
       if (_preferencesFile.existsSync()) {
-        fromSystem = json.decode(_preferencesFile.readAsStringSync());
+        String content = _preferencesFile.readAsStringSync();
+        if (content.isNotEmpty) {
+          fromSystem = json.decode(content);
+        }
       } else {
         _preferencesFile.createSync(recursive: true);
       }
