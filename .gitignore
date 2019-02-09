@@ -8,3 +8,7 @@ pubspec.lock
 
 build/
 .idea
+tmp/
+.vscode
+bin/
+example/

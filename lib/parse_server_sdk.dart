@@ -8,11 +8,10 @@ import 'dart:typed_data';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:meta/meta.dart';
+
 import 'package:path/path.dart' as path;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:uuid/uuid.dart';
-import 'package:path_provider/path_provider.dart';
 
 part 'src/base/parse_constants.dart';
 
@@ -55,6 +54,8 @@ part 'src/utils/parse_file_extensions.dart';
 part 'src/utils/parse_logger.dart';
 
 part 'src/utils/parse_utils.dart';
+part 'src/utils/path_provider.dart';
+part 'src/utils/shared_preferences.dart';
 
 class Parse {
   ParseCoreData data;
