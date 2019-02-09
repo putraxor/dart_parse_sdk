@@ -29,7 +29,14 @@ class LiveQuery {
     var webSocket = await WebSocket.connect(client.data.liveQueryURL);
     channel = new IOWebSocketChannel(webSocket);
     channel.sink.add(JsonEncoder().convert(connectMessage));
-    subscribeMessage['query']['className'] = className;
+    subscribeMessage = {
+      "op": "subscribe",
+      "requestId": 1,
+      "query": {
+        "className": className,
+        "where": {},
+      }
+    };
     channel.sink.add(JsonEncoder().convert(subscribeMessage));
     channel.stream.listen((message) {
       Map<String, dynamic> actionData = JsonDecoder().convert(message);
