@@ -181,7 +181,7 @@ You can create and control users just as normal using this SDK.
 
 To register a user, first create one :
 ```dart
-var user =  ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+var user = ParseUser("putraxor", "secure123", "youremail@gmail.com")
 ```
 Then have the user sign up:
 
