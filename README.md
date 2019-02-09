@@ -11,7 +11,7 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 
 ## Getting Started
 To install, either add to your pubspec.yaml
-```
+```yaml
 dependencies:  
     parse_server_sdk: ^1.0.11
 ```
@@ -20,7 +20,7 @@ or clone this repository and add to your project. As this is an early developmen
 
 Once you have the library added to your project, upon first call to your app (Similar to what your application class would be) add the following...
 
-```
+```dart
 Parse().initialize(
         ApplicationConstants.keyApplicationId,
         ApplicationConstants.keyParseServerUrl);
@@ -28,20 +28,20 @@ Parse().initialize(
 
 It's possible to add other params, such as ...
 
-```
+```dart
 Parse().initialize(
         ApplicationConstants.keyApplicationId,
         ApplicationConstants.keyParseServerUrl,
         masterKey: ApplicationConstants.keyParseMasterKey,
         clientKey: ApplicationConstants.keyParseClientKey,
+        liveQueryUrl: ApplicationConstants.keyLiveQueryUrl,
         debug: true,
-        liveQuery: true,
 		securityContext: securityContext);
 ```
 
 ## Queries
 Once you have setup the project and initialised the instance, you can then retreive data from your server by calling:
-```
+```dart
 var apiResponse = await ParseObject('ParseTableName').getAll();
 
     if (apiResponse.success){
@@ -52,7 +52,7 @@ var apiResponse = await ParseObject('ParseTableName').getAll();
 ```
 Or you can get an object by its objectId:
 
-```
+```dart
 var dietPlan = await DietPlan().getObject('R5EonpUDWy');
 
     if (dietPlan.success) {
@@ -63,10 +63,11 @@ var dietPlan = await DietPlan().getObject('R5EonpUDWy');
 ```
 
 
+
 ## Complex queries
 You can create complex queries to really put your database to the test:
 
-```
+```dart
     var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
       ..startsWith(DietPlan.keyName, "Keto")
       ..greaterThan(DietPlan.keyFat, 64)
@@ -100,10 +101,22 @@ The features available are:-
  * Descending
  * Plenty more!
 
+ ## LiveQuery
+
+ Example of LiveQuery usage:
+
+ ```dart
+   var live = LiveQuery(ParseHTTPClient());
+  live.subscribe('Post');
+  live.on('create', (val) {
+    print('From live $val');
+  });
+  ```
+
 ## Objects
 
 You can create custom objects by calling:
-```
+```dart
 var dietPlan = ParseObject('DietPlan')
 	..set('Name', 'Ketogenic')
 	..set('Fat', 65);
@@ -123,7 +136,7 @@ The features available are:-
 ## Custom Objects
 You can create your own ParseObjects or convert your existing objects into Parse Objects by doing the following:
 
-```
+```dart
 class DietPlan extends ParseObject implements ParseCloneable {
 
   DietPlan() : super(_keyTableName);
@@ -146,7 +159,7 @@ class DietPlan extends ParseObject implements ParseCloneable {
 
 To add a variable to an object call and retrieve it, call
 
-```
+```dart
 dietPlan.set<int>('RandomInt', 8);
 var randomInt = dietPlan.get<int>('RandomInt');
 ```
@@ -155,13 +168,13 @@ var randomInt = dietPlan.get<int>('RandomInt');
 
 You can now save an object by calling .pin() on an instance of an object
 
-```
+```dart
 dietPlan.pin();
 ```
 
 and to retrieve it
 
-```
+```dart
 var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
 ```
 
@@ -170,22 +183,22 @@ var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
 You can create and control users just as normal using this SDK.
 
 To register a user, first create one :
-```
+```dart
 var user =  ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
 ```
 Then have the user sign up:
 
-```
+```dart
 var response = await user.signUp();
 if (response.success) user = response.result;
 ```
 You can also logout and login with the user:
-```
+```dart
 var response = await user.login();
 if (response.success) user = response.result;
 ```
 Also, once logged in you can manage sessions tokens. This feature can be called after Parse().init() on startup to check for a logged in user.
-```
+```dart
 user = ParseUser.currentUser();
 ```
 Other user features are:-
@@ -198,12 +211,12 @@ Other user features are:-
 ## Config
 
 The SDK now supports Parse Config. A map of all configs can be grabbed from the server by calling :
-```
+```dart
 var response = await ParseConfig().getConfigs();
 ```
 
 and to add a config:
-```
+```dart
 ParseConfig().addConfig('TestConfig', 'testing');
 ```
 
