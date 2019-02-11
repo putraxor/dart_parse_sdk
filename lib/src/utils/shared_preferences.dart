@@ -4,15 +4,13 @@ part of flutter_parse_sdk;
 class SharedPreferences {
   SharedPreferences._(this._preferenceCache);
 
-  static const String _prefix = 'flutter.';
-
   static SharedPreferences _instance;
   static Future<SharedPreferences> getInstance() async {
     if (_instance == null) {
       Map<Object, Object> fromSystem = <String, Object>{};
 
       final temp = (await getTemporaryDirectory());
-      File _preferencesFile = File('${temp.path}/${_prefix}pref');
+      File _preferencesFile = File('${temp.path}/pref');
       if (_preferencesFile.existsSync()) {
         String content = _preferencesFile.readAsStringSync();
         if (content.isNotEmpty) {
@@ -25,8 +23,7 @@ class SharedPreferences {
       // Strip the flutter. prefix from the returned preferences.
       final Map<String, Object> preferencesMap = <String, Object>{};
       for (String key in fromSystem.keys) {
-        assert(key.startsWith(_prefix));
-        preferencesMap[key.substring(_prefix.length)] = fromSystem[key];
+        preferencesMap[key] = fromSystem[key];
       }
       _instance = SharedPreferences._(preferencesMap);
     }
@@ -81,7 +78,7 @@ class SharedPreferences {
   Future<File> _getPreferencePath() async {
     if (_preferenceFile == null) {
       final temp = (await getTemporaryDirectory());
-      _preferenceFile = File('${temp.path}/${_prefix}pref');
+      _preferenceFile = File('${temp.path}/pref');
     }
     return _preferenceFile;
   }
@@ -128,7 +125,7 @@ class SharedPreferences {
 
   Future<bool> _setValue(String valueType, String key, Object value) {
     final Map<String, dynamic> params = <String, dynamic>{
-      'key': '$_prefix$key',
+      'key': '$key',
     };
     if (value == null) {
       _preferenceCache.remove(key);
