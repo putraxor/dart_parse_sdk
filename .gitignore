@@ -12,3 +12,6 @@ tmp/
 .vscode
 bin/
 example/
+
+tmp/
+usage/
