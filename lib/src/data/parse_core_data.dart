@@ -2,7 +2,6 @@ part of flutter_parse_sdk;
 
 /// Singleton class that defines all user keys and data
 class ParseCoreData {
-
   factory ParseCoreData() => _instance;
 
   ParseCoreData._init(this.applicationId, this.serverUrl);
@@ -23,25 +22,37 @@ class ParseCoreData {
       String clientKey,
       String sessionId,
       bool autoSendSessionId,
-      SecurityContext securityContext}) {
+      SecurityContext securityContext,
+      CoreStore store}) {
     _instance = ParseCoreData._init(appId, serverUrl);
 
-    if (debug != null)
+    _instance.storage ??=
+        store ?? CoreStoreImp.getInstance(password: masterKey);
+
+    if (debug != null) {
       _instance.debug = debug;
-    if (appName != null)
+    }
+    if (appName != null) {
       _instance.appName = appName;
-    if (liveQueryUrl != null)
+    }
+    if (liveQueryUrl != null) {
       _instance.liveQueryURL = liveQueryUrl;
-    if (clientKey != null)
+    }
+    if (clientKey != null) {
       _instance.clientKey = clientKey;
-    if (masterKey != null)
+    }
+    if (masterKey != null) {
       _instance.masterKey = masterKey;
-    if (sessionId != null)
+    }
+    if (sessionId != null) {
       _instance.sessionId = sessionId;
-    if (autoSendSessionId != null)
+    }
+    if (autoSendSessionId != null) {
       _instance.autoSendSessionId = autoSendSessionId;
-    if (securityContext != null)
+    }
+    if (securityContext != null) {
       _instance.securityContext = securityContext;
+    }
   }
 
   String appName;
@@ -54,7 +65,7 @@ class ParseCoreData {
   bool autoSendSessionId;
   SecurityContext securityContext;
   bool debug;
-  SharedPreferences storage;
+  Future<CoreStore> storage;
 
   /// Sets the current sessionId.
   ///
@@ -64,8 +75,8 @@ class ParseCoreData {
     this.sessionId = sessionId;
   }
 
-  Future<SharedPreferences> getStore() async {
-    return storage ?? (storage = await SharedPreferences.getInstance());
+  Future<CoreStore> getStore() {
+    return storage;
   }
 
   @override

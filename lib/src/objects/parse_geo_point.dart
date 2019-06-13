@@ -1,7 +1,9 @@
 part of flutter_parse_sdk;
 
-class ParseGeoPoint extends ParseObject {
+const String keyLatitude = 'latitude';
+const String keyLongitude = 'longitude';
 
+class ParseGeoPoint extends ParseObject {
   /// Creates a Parse Object of type GeoPoint
   ParseGeoPoint(
       {double latitude = 0.0,
@@ -10,9 +12,8 @@ class ParseGeoPoint extends ParseObject {
       ParseHTTPClient client,
       bool autoSendSessionId})
       : super(keyGeoPoint) {
-
-    latitude = latitude;
-    longitude = longitude;
+    this.latitude = latitude;
+    this.longitude = longitude;
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _client = client ??
@@ -22,11 +23,15 @@ class ParseGeoPoint extends ParseObject {
             securityContext: ParseCoreData().securityContext);
   }
 
-  double latitude;
-  double longitude;
+  double get latitude => super.get<double>(keyLatitude);
+  set latitude(double latitude) => set<double>(keyLatitude, latitude);
+
+  double get longitude => super.get<double>(keyLongitude);
+  set longitude(double longitude) => set<double>(keyLongitude, longitude);
 
   @override
-  Map<String, dynamic> toJson({bool full = false, bool forApiRQ = false}) => <String, dynamic>{
+  Map<String, dynamic> toJson({bool full = false, bool forApiRQ = false}) =>
+      <String, dynamic>{
         '__type': 'GeoPoint',
         'latitude': latitude,
         'longitude': longitude

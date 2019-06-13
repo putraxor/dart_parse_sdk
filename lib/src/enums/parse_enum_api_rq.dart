@@ -30,5 +30,7 @@ enum ParseApiRQ {
   increment,
   decrement,
   getConfigs,
-  addConfig
+  addConfig,
+  liveQuery,
+  batch
 }

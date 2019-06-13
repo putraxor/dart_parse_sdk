@@ -28,8 +28,12 @@ class ParseFile extends ParseObject {
   }
 
   File file;
-  String name;
-  String url;
+
+  String get name => super.get<String>(keyVarName);
+  set name(String name) => set<String>(keyVarName, name);
+
+  String get url => super.get<String>(keyVarURL);
+  set url(String url) => set<String>(keyVarURL, url);
 
   @override
   // ignore: overridden_fields
@@ -42,7 +46,7 @@ class ParseFile extends ParseObject {
       <String, String>{'__type': keyFile, 'name': name, 'url': url};
 
   @override
-  String toString() => json.encode(toString());
+  String toString() => json.encode(toJson(full: true));
 
   Future<ParseFile> loadStorage() async {
     final Directory tempPath = await getTemporaryDirectory();
@@ -89,9 +93,16 @@ class ParseFile extends ParseObject {
   Future<ParseResponse> upload() async {
     if (saved) {
       //Creates a Fake Response to return the correct result
-      final Map<String, String> response = <String, String>{'url': url, 'name': name};
-      return handleResponse<ParseFile>(this, Response(json.encode(response), 201),
-          ParseApiRQ.upload, _debug, className);
+      final Map<String, String> response = <String, String>{
+        'url': url,
+        'name': name
+      };
+      return handleResponse<ParseFile>(
+          this,
+          Response(json.encode(response), 201),
+          ParseApiRQ.upload,
+          _debug,
+          className);
     }
 
     final String ext = path.extension(file.path).replaceAll('.', '');

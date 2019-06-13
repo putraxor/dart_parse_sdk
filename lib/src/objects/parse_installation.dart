@@ -16,14 +16,17 @@ class ParseInstallation extends ParseObject {
   ParseInstallation.forQuery() : super(keyClassUser);
 
   static final List<String> readOnlyKeys = <String>[
-    // TODO
-    keyDeviceToken, keyDeviceType, keyInstallationId,
-    keyAppName, keyAppVersion, keyAppIdentifier, keyParseVersion
+    keyDeviceToken,
+    keyDeviceType,
+    keyInstallationId,
+    keyAppName,
+    keyAppVersion,
+    keyAppIdentifier,
+    keyParseVersion
   ];
   static String _currentInstallationId;
 
   //Getters/setters
-
   Map<String, dynamic> get acl => super.get<Map<String, dynamic>>(keyVarAcl);
 
   set acl(Map<String, dynamic> acl) =>
@@ -65,23 +68,17 @@ class ParseInstallation extends ParseObject {
   /// Updates the installation with current device data
   Future<void> _updateInstallation() async {
     //Device type
-    if (Platform.isAndroid)
+    if (Platform.isAndroid) {
       set<String>(keyDeviceType, 'android');
-    else if (Platform.isIOS)
+    } else if (Platform.isIOS) {
       set<String>(keyDeviceType, 'ios');
-    else if (Platform.isMacOS)
-      set<String>(keyDeviceType, 'macos');
-    else
-      throw Exception('Unsupported platform/operating system');
-
-    //Locale
-    final String locale = 'en_US';
-    if (locale != null && locale.isNotEmpty) {
-      set<String>(keyLocaleIdentifier, locale);
+    } else if (Platform.isLinux) {
+      set<String>(keyDeviceType, 'Linux');
+    } else if (Platform.isMacOS) {
+      set<String>(keyDeviceType, 'MacOS');
+    } else if (Platform.isWindows) {
+      set<String>(keyDeviceType, 'Windows');
     }
-
-    //Timezone
-    //TODO set<String>(keyTimeZone, );
 
     //App info
     //final PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -94,8 +91,10 @@ class ParseInstallation extends ParseObject {
   @override
   Future<ParseResponse> create() async {
     final bool isCurrent = await ParseInstallation.isCurrent(this);
-    if (isCurrent) await _updateInstallation();
-    //ParseResponse parseResponse = await super.create();
+    if (isCurrent) {
+      await _updateInstallation();
+    }
+
     final ParseResponse parseResponse = await _create();
     if (parseResponse.success && isCurrent) {
       saveInStorage(keyParseStoreInstallation);
@@ -120,12 +119,14 @@ class ParseInstallation extends ParseObject {
 
   /// Gets the locally stored installation
   static Future<ParseInstallation> _getFromLocalStore() async {
+    final CoreStore coreStore = await ParseCoreData().getStore();
+
     final String installationJson =
-        (await ParseCoreData().getStore()).getString(keyParseStoreInstallation);
+        await coreStore.getString(keyParseStoreInstallation);
 
     if (installationJson != null) {
-      final dynamic installationMap =
-          parseDecode(json.decode(installationJson));
+      final Map<String, dynamic> installationMap =
+          json.decode(installationJson);
 
       if (installationMap != null) {
         return ParseInstallation()..fromJson(installationMap);
@@ -140,6 +141,7 @@ class ParseInstallation extends ParseObject {
   /// so it creates and sets the static current installation UUID
   static Future<ParseInstallation> _createInstallation() async {
     _currentInstallationId ??= Uuid().v4();
+
     final ParseInstallation installation = ParseInstallation();
     installation._installationId = _currentInstallationId;
     await installation._updateInstallation();
@@ -196,13 +198,15 @@ class ParseInstallation extends ParseObject {
   ///Subscribes the device to a channel of push notifications.
   void subscribeToChannel(String value) {
     final List<dynamic> channel = <String>[value];
-    addUnique('channels', channel);
+    setAddAllUnique('channels', channel);
+    save();
   }
 
   ///Unsubscribes the device to a channel of push notifications.
   void unsubscribeFromChannel(String value) {
     final List<dynamic> channel = <String>[value];
-    removeAll('channels', channel);
+    setRemove('channels', channel);
+    save();
   }
 
   ///Returns an <List<String>> containing all the channel names this device is subscribed to.
@@ -213,7 +217,8 @@ class ParseInstallation extends ParseObject {
 
     if (apiResponse.success) {
       final ParseObject installation = apiResponse.result;
-      return Future.value(installation.get<List<dynamic>>('channels'));
+      return Future<List<dynamic>>.value(
+          installation.get<List<dynamic>>('channels'));
     } else {
       return null;
     }

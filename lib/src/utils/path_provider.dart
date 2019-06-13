@@ -8,3 +8,7 @@ Future<Directory> getTemporaryDirectory() async {
   // }
   // return path;
 }
+
+Future<Directory> getApplicationDocumentsDirectory() async {
+  return Directory.systemTemp;
+}
