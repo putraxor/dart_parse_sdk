@@ -62,7 +62,7 @@ class LiveQuery {
 
     try {
       _webSocket = await WebSocket.connect(_liveQueryURL);
-      //_webSocket.pingInterval = Duration(seconds: 5);
+      _webSocket.pingInterval = Duration(seconds: 10);
       if (_webSocket != null && _webSocket.readyState == WebSocket.open) {
         if (_debug) {
           print('$_printConstLiveQuery: Socket opened');
